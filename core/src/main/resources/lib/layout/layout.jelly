@@ -60,7 +60,6 @@ THE SOFTWARE.
 
   <j:new var="h" className="hudson.Functions" /><!-- instead of JSP functions -->
 ${h.initPageVariables(context)}
-${h.initPageVariables(context)}
 <!--
   depending on what tags are used, we can later end up discovering that we needed a session,
   but it's too late because the headers are already committed. so ensure we always have a session.
@@ -71,16 +70,7 @@ ${h.initPageVariables(context)}
 <j:set var="_" value="${h.configureAutoRefresh(request, response, attrs.norefresh!=null)}"/>
 
   <j:if test="${request.servletPath=='/' || request.servletPath==''}">
-    <st:setHeader name="X-Hudson" value="1.395"/>
-    <st:setHeader name="X-Jenkins" value="${servletContext.getAttribute('version')}"/>
-    <st:setHeader name="X-Jenkins-Session" value="${app.SESSION_HASH}"/>
-    <j:if test="${app.tcpSlaveAgentListener!=null}">
-      <!-- advertise the CLI TCP port -->
-      <st:setHeader name="X-Hudson-CLI-Port" value="${app.tcpSlaveAgentListener.port}"/>
-      <st:setHeader name="X-Jenkins-CLI-Port" value="${app.tcpSlaveAgentListener.port}"/>
-      <st:setHeader name="X-Jenkins-CLI2-Port" value="${app.tcpSlaveAgentListener.port}"/>
-      <st:setHeader name="X-Jenkins-CLI-Host" value="${app.tcpSlaveAgentListener.CLI_HOST_NAME}"/>
-    </j:if>
+    ${h.advertiseHeaders(response)}
     <j:forEach var="pd" items="${h.pageDecorators}">
       <st:include it="${pd}" page="httpHeaders.jelly" optional="true"/>
     </j:forEach>

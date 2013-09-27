@@ -183,6 +183,7 @@ public abstract class AbstractItem extends Actionable implements Item, HttpDelet
     public void setDescription(String description) throws IOException {
         this.description = description;
         save();
+        ItemListener.fireOnUpdated(this);
     }
 
     /**
@@ -513,7 +514,7 @@ public abstract class AbstractItem extends Actionable implements Item, HttpDelet
             // ignore
         }
 
-        Jenkins.getInstance().rebuildDependencyGraph();
+        Jenkins.getInstance().rebuildDependencyGraphAsync();
     }
 
     /**
@@ -592,7 +593,7 @@ public abstract class AbstractItem extends Actionable implements Item, HttpDelet
             } finally {
                 Items.updatingByXml.set(false);
             }
-            Jenkins.getInstance().rebuildDependencyGraph();
+            Jenkins.getInstance().rebuildDependencyGraphAsync();
 
             // if everything went well, commit this new version
             out.commit();
